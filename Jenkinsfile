@@ -1,23 +1,21 @@
-pipeline(
-environment {dockerImage = ''}
-agent any
-
-stages{
-stage ('Prepare'){
-steps{
-sh 'docker stop $(docker ps -q --filter "ancestor-labllbotcarrier")'
-sh 'docker rm -f $(docker ps -q --filter "ancestor-labllbotcarrier" --filter "status-exited")
-}
-}
-stage('Build'){
-steps{
-sh 'docker build -t lab11botcarrier /var/jenkins_home/workspace/DockerPipeline/Dockerfile'
-}
-}
-stage('Deploy'){
-steps{
-sh 'docker run -d lab11botcarrier'
-}
-}
-}
+pipeline {
+    agent {
+        docker {
+            image 'maven:3.8.4-openjdk-11'
+            args '-v $HOME/.m2:/root/.m2'
+        }
+    }
+    stages {
+        stage('git') {
+            steps {
+                git url: "https://github.com/Covielli/appz_bot_example.git"
+            }
+        }
+        stage('Build') { 
+            steps {
+                sh 'mvn clean install'
+                sh 'mvn -e exec:java -Dexec.mainClass="kpi.acts.appz.bot.hellobot.HelloWorldBot"'
+            }
+        }
+    }
 }
