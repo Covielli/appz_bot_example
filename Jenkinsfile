@@ -13,8 +13,8 @@ pipeline {
         }
         stage('Build') { 
             steps {
-                sh 'mvn clean install'
-                sh 'mvn -e exec:java -Dexec.mainClass="kpi.acts.appz.bot.hellobot.HelloWorldBot"'
+                sh 'docker build -f ./Dockerfile .'
+               // sh 'mvn -e exec:java -Dexec.mainClass="kpi.acts.appz.bot.hellobot.HelloWorldBot"'
             }
         }
     }
